@@ -41,9 +41,13 @@ Deactivate the example environment
 
     unpathify example
 
+Pathify will remember your previous activations, so you can call deactivate without an argument to unpathify the last loaded environment
+
+    unpathify
+
 ### Create a new environment
 
-We're going to create a new environment called `fluffy`
+We're going to create a new environment called `fluffy`  (You can call your environment whatever you want as long as there are no spaces in the name.)  Create a new environment file in the `~/.pathify` folder.
 
     cd ~/.pathify
     cp example fluffy
@@ -65,7 +69,6 @@ Deactivate fluffy
 __Todo__
 
 * create a "add new environment" command
-* remember previous pathify activations so we can just call `unpathify` without any arguments to undo the last environment
 
 __License__
 

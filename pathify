@@ -9,23 +9,44 @@
 
 PATHIFY_HOME=$HOME/.pathify
 [[ -e "$PATHIFY_HOME" ]] || mkdir -p "$PATHIFY_HOME"
+# Clear history
+unset PATHIFY_HISTORY
 
 function pathify {
     local env="$1"
     local activation_script="$PATHIFY_HOME/$env"
+    [[ -z "$PATHIFY_HOME" ]] && echo "pathify: Error: PATHIFY_HOME not set" && return 1
     if [[ -e "$activation_script" ]] 
     then
-        echo "loading $env"
+        echo "pathify: Loading $env"
         source "$activation_script"
+
+        if [[ "$?" == 0 ]]
+        then
+            PATHIFY_HISTORY="$env $PATHIFY_HISTORY"
+        fi
     else
-        echo "Couldn't find activation script for '$env' at '$activation_script'"
+        echo "pathify: Error: Couldn't find activation script for '$env' at '$activation_script'"
     fi
 }
 
 function unpathify {
-    local env="$1"
+    local env
+    if [[ -z "$1" ]]
+    then
+        env="${PATHIFY_HISTORY%% *}"
+    else
+        env="$1"
+    fi
+    [[ -z "$env" ]] && echo "pathify: Error: no environment to unload" && return 1
+
     local deactivation_command="deactivate_$env"
+    echo "pathify: Unloading $env"
     "$deactivation_command"
+    if [[ "$?" == 0 ]]
+    then
+        PATHIFY_HISTORY="${PATHIFY_HISTORY/$env /}"
+    fi
 }
 
 # vim: ft=zsh ts=4 sw=4 et:
