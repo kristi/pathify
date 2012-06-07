@@ -12,7 +12,7 @@ PATHIFY_HOME=$HOME/.pathify
 
 function pathify {
     local env="$1"
-    local activation_script="$PATHY_HOME/$env"
+    local activation_script="$PATHIFY_HOME/$env"
     if [[ -e "$activation_script" ]] 
     then
         echo "loading $env"
