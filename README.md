@@ -18,6 +18,8 @@ Install
 Usage
 -----
 
+### Activate an environment
+
 Activate the example environment that came with pathify.
 (The example just adds `/sbin` to your path)
 
@@ -33,6 +35,8 @@ You can view all your environment variables by running
 
     printenv
 
+### Deactivate an environment
+
 Deactivate the example environment
 
     unpathify example
@@ -43,10 +47,9 @@ We're going to create a new environment called `fluffy`
 
     cd ~/.pathify
     cp example fluffy
+    # Change variable names
+    sed -i -e 's/example/fluffy/g' -e 's/EXAMPLE/FLUFFY/g' fluffy
     # Hack away
-    # You should probably start with a couple of search/replaces, e.g.
-    # :%s/example/fluffy/g
-    # :%s/EXAMPLE/FLUFFY/g
     vim fluffy
 
 Activate your new environment
