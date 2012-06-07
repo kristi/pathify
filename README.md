@@ -39,9 +39,14 @@ Deactivate the example environment
 
 ### Create a new environment
 
+We're going to create a new environment called `fluffy`
+
     cd ~/.pathify
     cp example fluffy
     # Hack away
+    # You should probably start with a couple of search/replaces, e.g.
+    # :%s/example/fluffy/g
+    # :%s/EXAMPLE/FLUFFY/g
     vim fluffy
 
 Activate your new environment
@@ -51,3 +56,14 @@ Activate your new environment
 Deactivate fluffy
 
     unpathify fluffy
+
+-----
+
+__Todo__
+
+* create a "add new environment" command
+* remember previous pathify activations so we can just call `unpathify` without any arguments to undo the last environment
+
+__License__
+
+GPL2 or later
