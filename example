@@ -1,0 +1,63 @@
+# This file must be sourced from bash
+# You cannot run it directly
+#
+# This simple example adds /sbin to the user's path
+
+deactivate_example () {
+    # reset old environment variables
+    if [ -n "$_OLD_EXAMPLE_PATH" ] ; then
+        PATH="$_OLD_EXAMPLE_PATH"
+        export PATH
+        unset _OLD_EXAMPLE_PATH
+    fi
+
+    # This should detect bash and zsh, which have a hash command that must
+    # be called to get it to forget past commands.  Without forgetting
+    # past commands the $PATH changes we made may not be respected
+    if [ -n "$BASH" -o -n "$ZSH_VERSION" ] ; then
+        hash -r
+    fi
+
+    if [ -n "$_OLD_EXAMPLE_PS1" ] ; then
+        PS1="$_OLD_EXAMPLE_PS1"
+        export PS1
+        unset _OLD_EXAMPLE_PS1
+    fi
+
+    unset EXAMPLE_ENV
+    if [ ! "$1" = "nondestructive" ] ; then
+    # Self destruct!
+        unset -f deactivate_example
+    fi
+}
+
+# unset irrelavent variables
+deactivate_example nondestructive
+
+EXAMPLE_ENV="/sbin"
+export EXAMPLE_ENV
+
+_OLD_EXAMPLE_PATH="$PATH"
+PATH="$EXAMPLE_ENV:$PATH"
+export PATH
+
+if [ -z "$EXAMPLE_ENV_DISABLE_PROMPT" ] ; then
+    _OLD_EXAMPLE_PS1="$PS1"
+    if [ "`basename \"$EXAMPLE_ENV\"`" = "__" ] ; then
+        # special case for Aspen magic directories
+        # see http://www.zetadev.com/software/aspen/
+        PS1="[example] $PS1"
+    else
+        #PS1="(`basename \"$EXAMPLE_ENV\"`)$PS1"
+        # Add env name before first non-whitespace PS1 char
+        PS1=$(echo "$PS1" | sed -e '0,/\S/s//[example] &/')
+    fi
+    export PS1
+fi
+
+# This should detect bash and zsh, which have a hash command that must
+# be called to get it to forget past commands.  Without forgetting
+# past commands the $PATH changes we made may not be respected
+if [ -n "$BASH" -o -n "$ZSH_VERSION" ] ; then
+    hash -r
+fi

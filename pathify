@@ -1,0 +1,31 @@
+#
+# Helper script to manage PATH and environment variables
+#
+# Source this script in your ~/.bashrc file.
+# E.g. add this line to ~/.bashrc (change path to point to this script)
+#     source ~/pathify
+#
+# Add environment activation scripts (or symlinks) in $PATHIFY_HOME
+
+PATHIFY_HOME=$HOME/.pathify
+[[ -e "$PATHIFY_HOME" ]] || mkdir -p "$PATHIFY_HOME"
+
+function pathify {
+    local env="$1"
+    local activation_script="$PATHY_HOME/$env"
+    if [[ -e "$activation_script" ]] 
+    then
+        echo "loading $env"
+        source "$activation_script"
+    else
+        echo "Couldn't find activation script for '$env' at '$activation_script'"
+    fi
+}
+
+function unpathify {
+    local env="$1"
+    local deactivation_command="deactivate_$env"
+    "$deactivation_command"
+}
+
+# vim: ft=zsh ts=4 sw=4 et:
