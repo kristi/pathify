@@ -9,7 +9,7 @@ Install
     cd
     git clone git://github.com/kristi/pathify.git .pathify
 
-    # Temporary install for this shell session
+    # Install for this shell session only
     source ~/.pathify/pathify
 
     # Install for all future bash sessions
