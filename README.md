@@ -18,7 +18,7 @@ Install
 Usage
 -----
 
-Activate the example environment
+Activate the example environment that came with pathify.
 (The example just adds `/sbin` to your path)
 
     pathify example
@@ -37,7 +37,7 @@ Deactivate the example environment
 
     unpathify example
 
-Create a new environment
+### Create a new environment
 
     cd ~/.pathify
     cp example fluffy
