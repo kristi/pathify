@@ -18,21 +18,26 @@ Install
 Usage
 -----
 
-    # Activate the example environment
-    # (The example just adds /sbin to your path)
+Activate the example environment
+(The example just adds /sbin to your path)
+
     pathify example
 
-    # Deactivate the example environment
+Deactivate the example environment
+
     unpathify example
 
-    # Create a new environment
+Create a new environment
+
     cd ~/.pathify
     cp example fluffy
     # Hack away
     vim fluffy
 
-    # Activate your new environment
+Activate your new environment
+
     pathify fluffy
 
-    # Deactivate fluffy
+Deactivate fluffy
+
     unpathify fluffy
