@@ -41,7 +41,8 @@ _OLD_EXAMPLE_PATH="$PATH"
 PATH="$EXAMPLE_ENV:$PATH"
 export PATH
 
-if [ -z "$EXAMPLE_ENV_DISABLE_PROMPT" ] ; then
+if [ -z "$EXAMPLE_ENV_DISABLE_PROMPT" ] ||
+   [ -z "$PATHIFY_DISABLE_PROMPT" ] ; then
     _OLD_EXAMPLE_PS1="$PS1"
     if [ "`basename \"$EXAMPLE_ENV\"`" = "__" ] ; then
         # special case for Aspen magic directories
