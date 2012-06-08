@@ -49,4 +49,25 @@ function unpathify {
     fi
 }
 
+# tab completion
+if [ -n "$BASH" ] ; then
+    _pathify_complete_envs()
+    {
+        local cur="${COMP_WORDS[COMP_CWORD]}"
+        COMPREPLY=( $(compgen -W "`ls $PATHIFY_HOME | grep -x -v -E 'pathify|README.md'`" -- ${cur}) )
+    }
+
+    complete -o default -o nospace -F _pathify_complete_envs pathify
+    #complete -o default -o nospace -F _virtualenvs rmvirtualenv
+
+elif [ -n "$ZSH" ] ; then
+    _pathify_complete_envs()
+    {
+        local cur="${COMP_WORDS[COMP_CWORD]}"
+        reply=( $(cd $PATHIFY_HOME && ls -d ${1}* | grep -x -v -E 'pathify|README.md') )
+    }
+
+    compctl -K _pathify_complete_envs pathify
+fi
+
 # vim: ft=zsh ts=4 sw=4 et:
