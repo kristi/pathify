@@ -1,7 +1,11 @@
 pathify
 =======
 
-Shell environment helper to setup environment variables.  Inspired by virtualenv and virtualenvwrapper.
+A modular shell environment helper to manage sets of environment variables.  Inspired by virtualenv and virtualenvwrapper.
+
+Setup an environment with a custom PATH so that you can run scripts without having to specify the path.
+
+Or set customised CFLAGS and LDFLAGS for a custom build environment.
 
 Install
 -------
