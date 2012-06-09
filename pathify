@@ -46,7 +46,7 @@ function pathify {
         edit) shift; pathify-edit "$@"; return $? ;;
         help|-h|--help) pathify-usage; return 1 ;;
         load) shift ;;
-        new) shift; mkpathifyenv "$@"; return $? ;;
+        new) shift; pathify-new "$@"; return $? ;;
         reload) shift; repathisy "$@"; return $? ;;
         unload) shift; unpathisy "$@"; return $? ;;
         --version) echo "pathify 1.0"; return 0 ;;
@@ -69,7 +69,11 @@ function pathify {
     fi
 }
 
-function unpathify {
+function pathify-load {
+    pathify load "$@"
+}
+
+function pathify-unload {
     local env
     if [[ -z "$1" ]]
     then
@@ -88,7 +92,12 @@ function unpathify {
     fi
 }
 
-function repathify {
+function unpathify {
+    pathify-unload "$@"
+}
+
+
+function pathify-reload {
     local env
     if [[ -z "$1" ]]
     then
@@ -102,7 +111,11 @@ function repathify {
     pathify "$env"
 }
 
-function mkpathifyenv {
+function repathify {
+    pathify-reload "$@"
+}
+
+function pathify-new {
     local env="$1"
     [[ -z "$env" ]] && echo "pathify: Error: no environment name given" && return 1
     [[ -e "$PATHIFY_HOME/$env" ]] && echo "pathify: Error: '$env' environment already exists" && return 1

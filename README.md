@@ -178,7 +178,8 @@ Also, the reload command performs the same
 
 __Todo__
 
-* create a "add new environment" command
+* create a "add new environment variable" helper command
+* fix bash completion to add commands?
 
 __License__
 
