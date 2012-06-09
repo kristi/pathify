@@ -76,9 +76,14 @@ if [ -n "$BASH" ] ; then
         local cur="${COMP_WORDS[COMP_CWORD]}"
         COMPREPLY=( $(compgen -W "`ls $PATHIFY_HOME | grep -x -v -E 'pathify|README.md'`" -- ${cur}) )
     }
+    _pathify_complete_hist()
+    {
+        local cur="${COMP_WORDS[COMP_CWORD]}"
+        COMPREPLY=( $(compgen -W "$PATHIFY_HISTORY" -- ${cur}) )
+    }
 
-    complete -o default -o nospace -F _pathify_complete_envs pathify
-    #complete -o default -o nospace -F _virtualenvs rmvirtualenv
+    complete -o default -o nospace -F _pathify_complete_envs pathify pathify-edit
+    complete -o default -o nospace -F _pathify_complete_hist unpathify 
 
 elif [ -n "$ZSH" ] ; then
     _pathify_complete_envs()
@@ -86,8 +91,14 @@ elif [ -n "$ZSH" ] ; then
         local cur="${COMP_WORDS[COMP_CWORD]}"
         reply=( $(cd $PATHIFY_HOME && ls -d ${1}* | grep -x -v -E 'pathify|README.md') )
     }
+    _pathify_complete_hist()
+    {
+        local cur="${COMP_WORDS[COMP_CWORD]}"
+        reply=( $(echo ${PATHIFY_HISTORY// /$'\n'} | grep "^${1}") )
+    }
 
-    compctl -K _pathify_complete_envs pathify
+    compctl -K _pathify_complete_envs pathify pathify-edit
+    compctl -K _pathify_complete_hist unpathify 
 fi
 
 # vim: ft=zsh ts=4 sw=4 et:
