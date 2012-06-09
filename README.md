@@ -20,6 +20,11 @@ Install
 
     # Install for all future bash sessions
     echo "source ~/.pathify/pathify" >> ~/.bashrc
+    # (Some distros use ~/.bash_profile)
+    # echo "source ~/.pathify/pathify" >> ~/.bash_profile
+    
+    # Install for all future zsh sessions
+    echo "source ~/.pathify/pathify" >> ~/.zshrc
 
 Usage
 -----
