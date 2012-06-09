@@ -11,6 +11,7 @@ Inspired by virtualenv and virtualenvwrapper.
 
 Install
 -------
+Pathify works in bash and zsh. 
 
     cd
     git clone git://github.com/kristi/pathify.git .pathify

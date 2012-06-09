@@ -43,14 +43,18 @@ END
 
 function pathify {
     case "$1" in
-        edit) shift; pathify-edit "$@"; return $? ;;
+        edit) shift; pathify-edit "$@" ;;
         help|-h|--help) pathify-usage; return 1 ;;
-        load) shift ;;
-        new) shift; pathify-new "$@"; return $? ;;
-        reload) shift; repathisy "$@"; return $? ;;
-        unload) shift; unpathisy "$@"; return $? ;;
+        load) shift; pathify-load "$@" ;;
+        new) shift; pathify-new "$@" ;;
+        reload) shift; pathify-reload "$@" ;;
+        unload) shift; pathify-unload "$@" ;;
         --version) echo "pathify 1.0"; return 0 ;;
+        *) pathify-load "$@" ;;
     esac
+}
+
+function pathify-load {
     local env="$1"
     local activation_script="$PATHIFY_HOME/$env"
     [[ -z "$PATHIFY_HOME" ]] && echo "pathify: Error: PATHIFY_HOME not set" && return 1
@@ -67,10 +71,6 @@ function pathify {
     else
         echo "pathify: Error: Couldn't find activation script for '$env' at '$activation_script'"
     fi
-}
-
-function pathify-load {
-    pathify load "$@"
 }
 
 function pathify-unload {
