@@ -50,6 +50,20 @@ function unpathify {
     fi
 }
 
+function repathify {
+    local env
+    if [[ -z "$1" ]]
+    then
+        env="${PATHIFY_HISTORY%% *}"
+    else
+        env="$1"
+    fi
+    [[ -z "$env" ]] && echo "pathify: Error: no environment to reload" && return 1
+
+    unpathify "$env"
+    pathify "$env"
+}
+
 function pathify-edit {
     local env="$1"
     ${EDITOR:-vim} $PATHIFY_HOME/$env

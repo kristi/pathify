@@ -93,6 +93,16 @@ You should set the environment variable `$EDITOR` to your preferred editor in yo
 
     export EDITOR="vim"
 
+### Reload an environment
+
+Call `repathify` to unload and load an environment
+
+    repathify fluffy
+
+This is equivalent to calling
+
+    unpathify fluffy
+    pathify fluffy
 
 -----
 
