@@ -29,26 +29,29 @@ Install
 Usage
 -----
 
-### Activate an environment
+### Load a pathify environment
 
-Activate the example environment that came with pathify.
-(The example just adds `/sbin` to your path)
-
-    pathify example
-
-Pathify comes with bash and zsh tab completion so you can type
-
-    pathify <TAB>
-
-to see a list of pathify environments you can use.
-
-The load command will also activate an enrionment
+Load the `example` environment that came with pathify.
+(`example` just adds `/sbin` to your path)
 
     pathify load example
 
+Pathify comes with bash and zsh tab completion so you can type
+
+    pathify load <TAB>
+
+to see a list of pathify environments you can use.
+
+Also, as a shortcut you can omit the `load` command and pathify
+assume you are loading an environment.
+
+    pathify example
+
 After you've activated the example, your prompt should show `[example]`.
 
-This example adds `/sbin` to your path.  You can now run commands from `/sbin` without the full path.  
+    [example] user@host $
+
+Since `example` added `/sbin` to your path, you can now run commands from `/sbin` without the full path.  
 
 Example: Without `/sbin` in your path, you would have to run `/sbin/shutdown`.  But now that you are in the example pathify environment, you can call shutdown without its path.  To show the shutdown help, run
 
@@ -58,19 +61,19 @@ You can view all your environment variables by running
 
     printenv
 
-### Deactivate an environment
+### Unload an environment
 
-Deactivate the example environment
-
-    unpathify example
-
-Pathify will remember your previous activations, so you can call deactivate without an argument to unpathify the last loaded environment
-
-    unpathify
-
-Use the unload command performs the same unpathify action
+Unload the example environment
 
     pathify unload example
+
+Pathify will remember your previous loads, so you can call `unload` without an argument to unload the last loaded environment
+
+    pathify unload
+
+Pathify also comes with a shortcut `unpathify` which does the same thing as `pathify unload`
+
+    unpathify example
 
 ### Create a new environment
 
@@ -87,13 +90,13 @@ You can also manually create a new environment by creating a file in the `PATHIF
     # Hack away
     vim fluffy
 
-Activate your new environment
+Load your new environment
 
     pathify fluffy
 
-Deactivate fluffy
+Unload fluffy
 
-    unpathify fluffy
+    pathify unload fluffy
 
 ### Edit an environment
 
@@ -105,7 +108,7 @@ You should set the environment variable `$EDITOR` to your preferred editor in yo
 
     export EDITOR="vim"
 
-You can also manually call an editor
+You can also manually edit an environment
 
     vim ~/.pathify/fluffy
 
@@ -127,7 +130,7 @@ For example, suppose we want to add a environment variable called `HELLO_WORLD`
 
 #### Set the new value
 
-After the `PATH` section, add some new lines
+After the `PATH` section, add some new lines to save the previous value of `HELLO_WORLD` and set the new value
 
     _OLD_FLUFFY_PATH="$PATH"
     PATH="/sbin:$PATH"
@@ -139,7 +142,7 @@ After the `PATH` section, add some new lines
 
 #### Restore old value in the deactivation function
 
-In the deactivation function, add some lines after the `PATH` section
+In the deactivation function, add some lines after the `PATH` section to restore `HELLO_WORLD` to the old value
 
     deactivate_fluffy () {
         # reset old environment variables
@@ -157,29 +160,27 @@ In the deactivation function, add some lines after the `PATH` section
 
 ### Reload an environment
 
-Call `repathify` to unload and load an environment
+Call `rereload` to unload and load an environment
 
-    repathify fluffy
+    pathify reload fluffy
 
 This is equivalent to calling
 
-    unpathify fluffy
-    pathify fluffy
+    pathify unload fluffy
+    pathify load fluffy
 
-`repathify` without any arguments will attempt to reload the last environment you loaded.
+`repathify` is a shortcut for `pathify reload`.  Either without any arguments will attempt to reload the last environment you loaded.
 
+    pathify unload
     repathify
 
-Also, the reload command performs the same
-
-    pathify reload fluffy
 
 -----
 
 __Todo__
 
 * create a "add new environment variable" helper command
-* fix bash completion to add commands?
+* fix bash completion to complete commands?
 
 __License__
 
