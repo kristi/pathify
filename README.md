@@ -42,6 +42,10 @@ Pathify comes with bash and zsh tab completion so you can type
 
 to see a list of pathify environments you can use.
 
+The load command will also activate an enrionment
+
+    pathify load example
+
 After you've activated the example, your prompt should show `[example]`.
 
 This example adds `/sbin` to your path.  You can now run commands from `/sbin` without the full path.  
@@ -64,14 +68,22 @@ Pathify will remember your previous activations, so you can call deactivate with
 
     unpathify
 
+Use the unload command performs the same unpathify action
+
+    pathify unload example
+
 ### Create a new environment
 
-We're going to create a new environment called `fluffy`  (You can call your environment whatever you want as long as there are no spaces in the name.)  Create a new environment file in the `~/.pathify` folder.
+We're going to create a new environment called `fluffy`  (You can call your environment whatever you want as long as there are no spaces in the name.)  
+
+    pathify new fluffy
+
+You can also manually create a new environment by creating a file in the `PATHIFY_HOME` (`~/.pathify`) folder.
 
     cd ~/.pathify
-    cp example fluffy
+    cp template fluffy
     # Change variable names
-    sed -i -e 's/example/fluffy/g' -e 's/EXAMPLE/FLUFFY/g' fluffy
+    sed -i -e 's/@env@/fluffy/g' -e 's/@ENV@/FLUFFY/g' fluffy
     # Hack away
     vim fluffy
 
@@ -85,13 +97,63 @@ Deactivate fluffy
 
 ### Edit an environment
 
-Pathify comes with a helper command `pathify-edit` to edit an environment
+Pathify comes with a edit command to edit an environment
 
-    pathify-edit fluffy
+    pathify edit fluffy
 
 You should set the environment variable `$EDITOR` to your preferred editor in your shell's config file, e.g. `~/.bashrc`), or else pathify will open vim (the author's preferred editor)
 
     export EDITOR="vim"
+
+You can also manually call an editor
+
+    vim ~/.pathify/fluffy
+
+### Setting the environment's `PATH`
+
+Suppose we want to add "~/fluffy/bin" to the fluffy environment's `PATH`.  Edit the fluffy environment and change the `PATH=` line to
+
+    PATH="$HOME/fluffy/bin:$PATH"
+
+Save and reload the environment
+
+    pathify reload fluffy
+
+### Setting other environment variables
+
+There are two parts: setting the new value, and restoring the old value in the deactivation function.
+
+For example, suppose we want to add a environment variable called `HELLO_WORLD`
+
+#### Set the new value
+
+After the `PATH` section, add some new lines
+
+    _OLD_FLUFFY_PATH="$PATH"
+    PATH="/sbin:$PATH"
+    export PATH
+
+    _OLD_FLUFFY_HELLO_WORLD="$HELLO_WORLD"
+    HELLO_WORLD="hiya"
+    export HELLO_WORLD
+
+#### Restore old value in the deactivation function
+
+In the deactivation function, add some lines after the `PATH` section
+
+    deactivate_fluffy () {
+        # reset old environment variables
+        if [ -n "$_OLD_FLUFFY_PATH" ] ; then
+            PATH="$_OLD_FLUFFY_PATH"
+            export PATH
+            unset _OLD_FLUFFY_PATH
+        fi
+
+        if [ -n "$_OLD_FLUFFY_HELLO_WORLD" ] ; then
+            HELLO_WORLD="$_OLD_FLUFFY_HELLO_WORLD"
+            export HELLO_WORLD
+            unset _OLD_FLUFFY_HELLO_WORLD
+        fi
 
 ### Reload an environment
 
@@ -107,6 +169,11 @@ This is equivalent to calling
 `repathify` without any arguments will attempt to reload the last environment you loaded.
 
     repathify
+
+Also, the reload command performs the same
+
+    pathify reload fluffy
+
 -----
 
 __Todo__

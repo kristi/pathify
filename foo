@@ -95,18 +95,11 @@ _OLD_FOO_MAKEFLAGS="$MAKEFLAGS"
 MAKEFLAGS="-j1 $MAKEFLAGS"
 export MAKEFLAGS
 
-if [ -z "$FOO_ENV_DISABLE_PROMPT" ] ||
+if [ -z "$FOO_ENV_DISABLE_PROMPT" ] &&
    [ -z "$PATHIFY_DISABLE_PROMPT" ] ; then
     _OLD_FOO_PS1="$PS1"
-    if [ "`basename \"$FOO_ENV\"`" = "__" ] ; then
-        # special case for Aspen magic directories
-        # see http://www.zetadev.com/software/aspen/
-        PS1="[foo] $PS1"
-    else
-        #PS1="(`basename \"$FOO_ENV\"`)$PS1"
-        # Add env name before first non-whitespace PS1 char
-        PS1=$(echo "$PS1" | sed -e '0,/\S/s//[foo] &/')
-    fi
+    # Add env name before first non-whitespace PS1 char
+    PS1=$(echo "$PS1" | sed -e '0,/\S/s//[foo] &/')
     export PS1
 fi
 

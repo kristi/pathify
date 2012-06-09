@@ -12,7 +12,45 @@ PATHIFY_HOME=$HOME/.pathify
 # Clear history
 unset PATHIFY_HISTORY
 
+function pathify-usage {
+    cat <<END
+pathify [env-name]
+unpathify [env-name]
+pathify command [env-name]
+
+Helper Commands
+
+pathify edit env-name     Opens your $EDITOR (or vim if $EDITOR is unset) to 
+                          edit a pathify environment
+pathify help, pathify -h, pathify --help   Displays this help message
+pathify load env-name     Loads an environment, sets variables
+pathify new env-name      Create a new pathify environment
+pathify reload env-name   Reloads an environment
+pathify unload env-name   Unloads an environment, reverts variables
+pathify --version         Displays version
+
+Note: You can't have an environment with the same name as a pathify command.
+    (So you can't create an environment called "new" for example.)
+
+    Also, you shouldn't create environments with the same name but different
+    case because environment variables may clobber each other, and it is
+    generally confusing.
+    (e.g. you should just pick one of "myenv" "myEnv" "MyEnv" "MYENV" )
+
+END
+    pathify --version
+}
+
 function pathify {
+    case "$1" in
+        edit) shift; pathify-edit "$@"; return $? ;;
+        help|-h|--help) pathify-usage; return 1 ;;
+        load) shift ;;
+        new) shift; mkpathifyenv "$@"; return $? ;;
+        reload) shift; repathisy "$@"; return $? ;;
+        unload) shift; unpathisy "$@"; return $? ;;
+        --version) echo "pathify 1.0"; return 0 ;;
+    esac
     local env="$1"
     local activation_script="$PATHIFY_HOME/$env"
     [[ -z "$PATHIFY_HOME" ]] && echo "pathify: Error: PATHIFY_HOME not set" && return 1
@@ -64,6 +102,32 @@ function repathify {
     pathify "$env"
 }
 
+function mkpathifyenv {
+    local env="$1"
+    [[ -z "$env" ]] && echo "pathify: Error: no environment name given" && return 1
+    [[ -e "$PATHIFY_HOME/$env" ]] && echo "pathify: Error: '$env' environment already exists" && return 1
+    [[ ! -e "$PATHIFY_HOME/template" ]] && echo "pathify: Error: no template found at '$PATHIFY_HOME/template'" && return 1
+    if echo "pathify template README.md" | grep -w -q "$env" ; then
+        echo "pathify: Error: invalid environment name - pathify system file" 
+        return 1
+    elif echo "edit help load new reload unload -h --help --version" | grep -w -q "$env" ; then
+        echo "pathify: Error: invalid environment name - cannot have environment with the same name as a pathify command"
+        return 1
+    elif (cd "$PATHIFY_HOME" && ls -1) | grep -x -i -q "$env" ; then
+        echo "pathify: Error: invalid environment name - case insensitive match with existing environment"
+        return 1
+    elif echo "$env" | grep -q "^[^[:alnum:]]" ; then
+        echo "pathify: Error: invalid environment name - cannot start with special character"
+        return 1
+    fi
+
+    [[ ! -e "$PATHIFY_HOME" ]] && echo "Creating PATHIFY_HOME dir at '$PATHIFY_HOME'" && mkdir -p "$PATHIFY_HOME"
+    cd "$PATHIFY_HOME"
+    local env_upper=$(echo "$env" | tr '[:lower:]' '[:upper:]')
+    sed -e "s/@env@/$env/g" -e "s/@ENV@/$env_upper/g" template > "$env"
+    pathify-edit "$env"
+}
+
 function pathify-edit {
     local env="$1"
     ${EDITOR:-vim} $PATHIFY_HOME/$env
@@ -74,7 +138,7 @@ if [ -n "$BASH" ] ; then
     _pathify_complete_envs()
     {
         local cur="${COMP_WORDS[COMP_CWORD]}"
-        COMPREPLY=( $(compgen -W "`ls $PATHIFY_HOME | grep -x -v -E 'pathify|README.md'`" -- ${cur}) )
+        COMPREPLY=( $(compgen -W "`ls $PATHIFY_HOME | grep -x -v -E 'pathify|README.md|template'`" -- ${cur}) )
     }
     _pathify_complete_hist()
     {
@@ -89,7 +153,7 @@ elif [ -n "$ZSH" ] ; then
     _pathify_complete_envs()
     {
         local cur="${COMP_WORDS[COMP_CWORD]}"
-        reply=( $(cd $PATHIFY_HOME && ls -d ${1}* | grep -x -v -E 'pathify|README.md') )
+        reply=( $(cd $PATHIFY_HOME && ls -d ${1}* | grep -x -v -E 'pathify|README.md|template') )
     }
     _pathify_complete_hist()
     {
