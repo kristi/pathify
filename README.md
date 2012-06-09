@@ -160,7 +160,7 @@ In the deactivation function, add some lines after the `PATH` section to restore
 
 ### Reload an environment
 
-Call `rereload` to unload and load an environment
+Use `reload` to unload and load an environment
 
     pathify reload fluffy
 
