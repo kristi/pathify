@@ -44,7 +44,9 @@ to see a list of pathify environments you can use.
 
 After you've activated the example, your prompt should show `[example]`.
 
-This example adds `/sbin` to your path.  You can now run commands from `/sbin` without the full path.  Example: show the shutdown help
+This example adds `/sbin` to your path.  You can now run commands from `/sbin` without the full path.  
+
+Example: Without `/sbin` in your path, you would have to run `/sbin/shutdown`.  But now that you are in the example pathify environment, you can call shutdown without its path.  To show the shutdown help, run
 
     shutdown -h
 
