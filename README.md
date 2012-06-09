@@ -104,6 +104,9 @@ This is equivalent to calling
     unpathify fluffy
     pathify fluffy
 
+`repathify` without any arguments will attempt to reload the last environment you loaded.
+
+    repathify
 -----
 
 __Todo__
