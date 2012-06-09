@@ -1,11 +1,13 @@
 pathify
 =======
 
-A modular shell environment helper to manage sets of environment variables.  Inspired by virtualenv and virtualenvwrapper.
+A modular shell environment helper to manage your PATH and other environment variables.  
 
-Setup an environment with a custom PATH so that you can run scripts without having to specify the path.
+Use pathify to setup an environment with a custom PATH so that you can run scripts without having to specify the path.
 
-Or set customised CFLAGS and LDFLAGS for a custom build environment.
+Or create a pathify environment with customised CFLAGS and LDFLAGS for a custom build environment.
+
+Inspired by virtualenv and virtualenvwrapper.
 
 Install
 -------
@@ -28,6 +30,12 @@ Activate the example environment that came with pathify.
 (The example just adds `/sbin` to your path)
 
     pathify example
+
+Pathify comes with bash and zsh tab completion so you can type
+
+    pathify <TAB>
+
+to see a list of pathify environments you can use.
 
 After you've activated the example, your prompt should show `[example]`.
 
