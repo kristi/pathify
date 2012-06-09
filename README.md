@@ -83,6 +83,17 @@ Deactivate fluffy
 
     unpathify fluffy
 
+### Edit an environment
+
+Pathify comes with a helper command `pathify-edit` to edit an environment
+
+    pathify-edit fluffy
+
+You should set the environment variable `$EDITOR` to your preferred editor in your shell's config file, e.g. `~/.bashrc`), or else pathify will open vim (the author's preferred editor)
+
+    export EDITOR="vim"
+
+
 -----
 
 __Todo__
