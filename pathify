@@ -16,6 +16,7 @@ function pathify {
     local env="$1"
     local activation_script="$PATHIFY_HOME/$env"
     [[ -z "$PATHIFY_HOME" ]] && echo "pathify: Error: PATHIFY_HOME not set" && return 1
+    [[ -z "$env" ]] && echo "pathify: Error: No environment given" && return 1
     if [[ -e "$activation_script" ]] 
     then
         echo "pathify: Loading $env"
@@ -47,6 +48,11 @@ function unpathify {
     then
         PATHIFY_HISTORY="${PATHIFY_HISTORY/$env /}"
     fi
+}
+
+function pathify-edit {
+    local env="$1"
+    ${EDITOR:-vim} $PATHIFY_HOME/$env
 }
 
 # tab completion
