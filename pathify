@@ -68,7 +68,7 @@ function pathify-load {
     local env="${1:-$PATHIFY_LAST_ENV}"
     _pathify_verify_env "$env" || return 1
 
-    [[ ! -e "$PATHIFY_HOME/$env" ]] && echo "pathify: Error: environment doesn't exist" && return 1
+    [[ ! -e "$PATHIFY_HOME/$env" ]] && echo "pathify: Error: environment '$env' doesn't exist" && return 1
 
     echo "pathify: Loading $env"
     source "$PATHIFY_HOME/$env"
@@ -135,14 +135,14 @@ function pathify-new {
     sed -e "s/@env@/$env/g" -e "s/@ENV@/$env_upper/g" template > "$PATHIFY_HOME/$env"
 
     PATHIFY_LAST_ENV="$env"
-    pathify-edit "$PATHIFY_HOME/$env"
+    pathify-edit "$env"
 }
 
 function pathify-edit {
     local env="${1:-$PATHIFY_LAST_ENV}"
     _pathify_verify_env "$env" || return 1
 
-    [[ ! -e "$PATHIFY_HOME/$env" ]] && echo "pathify: Error: environment doesn't exist" && return 1
+    [[ ! -e "$PATHIFY_HOME/$env" ]] && echo "pathify: Error: environment '$env' doesn't exist" && return 1
 
     PATHIFY_LAST_ENV="$env"
     ${EDITOR:-vim} "$PATHIFY_HOME/$env"

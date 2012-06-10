@@ -27,24 +27,43 @@ echo "Test load, unload"
     [[ -z "$CFLAGS" ]] || echo "CFLAGS=$CFLAGS"
 }
 
+echo "Test clean unloading"
+{
+    EDITOR="true"
+    rm -f test_env
+    printenv > vars_before
+    pathify new test_env
+    pathify load test_env
+    pathify unload test_env
+    unset PATHIFY_LAST_ENV
+    printenv > vars_after
+    diff -q vars_before vars_after
+
+    rm -f test_env
+    rm -f vars_before
+    rm -f vars_after
+}
+
 echo "Test environment parameter verification"
 {
-    ! pathify load nonexistant
-    ! pathify load ""
-    ! pathify unload nonexistant
-    ! pathify unload foo
-    ! pathify edit nonexistant 
-    ! pathify new foo
-    ! pathify new template
-    ! pathify new " invalid name"
-    ! pathify new edit
-    ! pathify new load
-    ! pathify new unload
-    ! pathify new template
+    ! (pathify load nonexistant)
+    ! (pathify load " ")
+    ! (pathify unload nonexistant)
+    ! (pathify unload foo)
+    ! (pathify edit nonexistant )
+    ! (pathify new foo)
+    ! (pathify new template)
+    ! (pathify new " invalid name")
+    ! (pathify new edit)
+    ! (pathify new load)
+    ! (pathify new unload)
+    ! (pathify new template)
 }
 
 echo "Test history saving"
 {
+    pathify load foo
+    pathify unload foo
     pathify load
 
     [[ -n "$FOO_ENV" ]]
@@ -55,7 +74,7 @@ echo "Test history saving"
     [[ -z "$FOO_ENV" ]]
     [[ -z "$CFLAGS" ]]
 
-    ! pathify unload
+    ! (pathify unload)
 
     pathify 
 
@@ -64,12 +83,30 @@ echo "Test history saving"
 
     pathify example
 
+    [[ -n "$FOO_ENV" ]]
+    [[ -n "$CFLAGS" ]]
     [[ -n "$EXAMPLE_ENV" ]]
     echo "$PATH" | grep -q "/sbin:"
+
+    unpathify
+
+    [[ -n "$FOO_ENV" ]]
+    [[ -n "$CFLAGS" ]]
+    [[ -z "$EXAMPLE_ENV" ]]
+    ! (echo "$PATH" | grep -q "/sbin:")
+
+    unpathify
+
+    [[ -z "$FOO_ENV" ]]
+    [[ -z "$CFLAGS" ]]
+    [[ -z "$EXAMPLE_ENV" ]]
+    ! (echo "$PATH" | grep -q "/sbin:")
 }
 
 echo "Test shortcuts"
 {
+    pathify load foo
+    pathify unload foo
     pathify
 
     [[ -n "$FOO_ENV" ]]
