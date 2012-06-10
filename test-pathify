@@ -1,0 +1,86 @@
+# call this script with bash or zsh
+#     bash test-pathify
+#     zsh test-pathify
+#
+# You should see the "Yay! Tests passed!" at the end or else something 
+# went wrong :(
+
+unset CFLAGS
+unset FOO_ENV
+unset PATHIFY_HISTORY
+unset PATHIFY_LAST_ENV
+
+# with -e, this script will exit if any command returns non-zero
+set -e
+source pathify
+
+echo "Test load, unload"
+{
+    pathify load foo
+
+    [[ -n "$FOO_ENV" ]]
+    [[ -n "$CFLAGS" ]]
+
+    pathify unload foo
+
+    [[ -z "$FOO_ENV" ]] || echo "FOO_ENV=$FOO_ENV"
+    [[ -z "$CFLAGS" ]] || echo "CFLAGS=$CFLAGS"
+}
+
+echo "Test environment parameter verification"
+{
+    ! pathify load nonexistant
+    ! pathify load ""
+    ! pathify unload nonexistant
+    ! pathify unload foo
+    ! pathify edit nonexistant 
+    ! pathify new foo
+    ! pathify new template
+    ! pathify new " invalid name"
+    ! pathify new edit
+    ! pathify new load
+    ! pathify new unload
+    ! pathify new template
+}
+
+echo "Test history saving"
+{
+    pathify load
+
+    [[ -n "$FOO_ENV" ]]
+    [[ -n "$CFLAGS" ]]
+
+    pathify unload 
+
+    [[ -z "$FOO_ENV" ]]
+    [[ -z "$CFLAGS" ]]
+
+    ! pathify unload
+
+    pathify 
+
+    [[ -n "$FOO_ENV" ]]
+    [[ -n "$CFLAGS" ]]
+
+    pathify example
+
+    [[ -n "$EXAMPLE_ENV" ]]
+    echo "$PATH" | grep -q "/sbin:"
+}
+
+echo "Test shortcuts"
+{
+    pathify
+
+    [[ -n "$FOO_ENV" ]]
+    [[ -n "$CFLAGS" ]]
+
+    unpathify
+
+    [[ -z "$FOO_ENV" ]]
+    [[ -z "$CFLAGS" ]]
+}
+
+echo ""
+echo "Yay! Tests passed!"
+# vim:ft=zsh sw=4 ts=4 sts=4 et
