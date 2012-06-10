@@ -115,9 +115,7 @@ function pathify-new {
     local env="$1"
     _pathify_verify_env "$env" || return 1
 
-    [[ -e "$PATHIFY_HOME/$env" ]] && echo "pathify: Error: '$env' environment already exists" && return 1
-    [[ ! -e "$PATHIFY_HOME/template" ]] && echo "pathify: Error: no template found at '$PATHIFY_HOME/template'" && return 1
-    if echo "pathify template README.md" | grep -w -q "$env" ; then
+    if echo "pathify template README.md test-pathify" | grep -w -q "$env" ; then
         echo "pathify: Error: invalid environment name - pathify system file" 
         return 1
     elif echo "edit help load new reload unload -h --help --version" | grep -w -q "$env" ; then
@@ -130,6 +128,8 @@ function pathify-new {
         echo "pathify: Error: invalid environment name - cannot start with special character"
         return 1
     fi
+    [[ -e "$PATHIFY_HOME/$env" ]] && echo "pathify: Error: '$env' environment already exists" && return 1
+    [[ ! -e "$PATHIFY_HOME/template" ]] && echo "pathify: Error: no template found at '$PATHIFY_HOME/template'" && return 1
 
     local env_upper=$(echo "$env" | tr '[:lower:]' '[:upper:]')
     sed -e "s/@env@/$env/g" -e "s/@ENV@/$env_upper/g" template > "$PATHIFY_HOME/$env"
@@ -153,7 +153,7 @@ if [ -n "$BASH" ] ; then
     _pathify_complete_envs()
     {
         local cur="${COMP_WORDS[COMP_CWORD]}"
-        COMPREPLY=( $(compgen -W "`ls $PATHIFY_HOME | grep -x -v -E 'pathify|README.md|template'`" -- ${cur}) )
+        COMPREPLY=( $(compgen -W "`ls $PATHIFY_HOME | grep -x -v -E 'pathify|README.md|template|test-pathify'`" -- ${cur}) )
     }
     _pathify_complete_hist()
     {
@@ -168,7 +168,7 @@ elif [ -n "$ZSH" ] ; then
     _pathify_complete_envs()
     {
         local cur="${COMP_WORDS[COMP_CWORD]}"
-        reply=( $(cd $PATHIFY_HOME && ls -d ${1}* | grep -x -v -E 'pathify|README.md|template') )
+        reply=( $(cd $PATHIFY_HOME && ls -d ${1}* | grep -x -v -E 'pathify|README.md|template|test-pathify') )
     }
     _pathify_complete_hist()
     {
