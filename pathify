@@ -9,8 +9,9 @@
 
 PATHIFY_HOME=$HOME/.pathify
 [[ -e "$PATHIFY_HOME" ]] || mkdir -p "$PATHIFY_HOME"
-# Clear history
-unset PATHIFY_HISTORY
+## Clear history of loaded environments
+#unset PATHIFY_HISTORY
+#unset PATHIFY_LAST_ENV
 
 function pathify-usage {
     cat <<END
@@ -54,33 +55,33 @@ function pathify {
     esac
 }
 
-function pathify-load {
+function _pathify_verify_env {
     local env="$1"
-    local activation_script="$PATHIFY_HOME/$env"
-    [[ -z "$PATHIFY_HOME" ]] && echo "pathify: Error: PATHIFY_HOME not set" && return 1
     [[ -z "$env" ]] && echo "pathify: Error: No environment given" && return 1
-    if [[ -e "$activation_script" ]] 
-    then
-        echo "pathify: Loading $env"
-        source "$activation_script"
+    [[ -z "$PATHIFY_HOME" ]] && echo "pathify: Error: PATHIFY_HOME not set" && return 1
+    [[ ! -e "$PATHIFY_HOME" ]] && echo "pathify: Error: PATHIFY_HOME directory '$PATHIFY_HOME' doesn't exist" && return 1
+    [[ ! -d "$PATHIFY_HOME" ]] && echo "pathify: Error: PATHIFY_HOME directory '$PATHIFY_HOME' not a directory" && return 1
+    return 0
+}
 
-        if [[ "$?" == 0 ]]
-        then
-            PATHIFY_HISTORY="$env $PATHIFY_HISTORY"
-        fi
-    else
-        echo "pathify: Error: Couldn't find activation script for '$env' at '$activation_script'"
+function pathify-load {
+    local env="${1:-$PATHIFY_LAST_ENV}"
+    _pathify_verify_env "$env" || return 1
+
+    [[ ! -e "$PATHIFY_HOME/$env" ]] && echo "pathify: Error: environment doesn't exist" && return 1
+
+    echo "pathify: Loading $env"
+    source "$PATHIFY_HOME/$env"
+
+    if [[ "$?" == 0 ]]
+    then
+        PATHIFY_HISTORY="$env ${PATHIFY_HISTORY//$env /}"
+        PATHIFY_LAST_ENV="$env"
     fi
 }
 
 function pathify-unload {
-    local env
-    if [[ -z "$1" ]]
-    then
-        env="${PATHIFY_HISTORY%% *}"
-    else
-        env="$1"
-    fi
+    local env=${1:-${PATHIFY_HISTORY%% *}}
     [[ -z "$env" ]] && echo "pathify: Error: no environment to unload" && return 1
 
     local deactivation_command="deactivate_$env"
@@ -89,6 +90,7 @@ function pathify-unload {
     if [[ "$?" == 0 ]]
     then
         PATHIFY_HISTORY="${PATHIFY_HISTORY/$env /}"
+        PATHIFY_LAST_ENV="$env"
     fi
 }
 
@@ -98,13 +100,7 @@ function unpathify {
 
 
 function pathify-reload {
-    local env
-    if [[ -z "$1" ]]
-    then
-        env="${PATHIFY_HISTORY%% *}"
-    else
-        env="$1"
-    fi
+    local env=${1:-${PATHIFY_HISTORY%% *}}
     [[ -z "$env" ]] && echo "pathify: Error: no environment to reload" && return 1
 
     unpathify "$env"
@@ -117,7 +113,8 @@ function repathify {
 
 function pathify-new {
     local env="$1"
-    [[ -z "$env" ]] && echo "pathify: Error: no environment name given" && return 1
+    _pathify_verify_env "$env" || return 1
+
     [[ -e "$PATHIFY_HOME/$env" ]] && echo "pathify: Error: '$env' environment already exists" && return 1
     [[ ! -e "$PATHIFY_HOME/template" ]] && echo "pathify: Error: no template found at '$PATHIFY_HOME/template'" && return 1
     if echo "pathify template README.md" | grep -w -q "$env" ; then
@@ -134,16 +131,21 @@ function pathify-new {
         return 1
     fi
 
-    [[ ! -e "$PATHIFY_HOME" ]] && echo "Creating PATHIFY_HOME dir at '$PATHIFY_HOME'" && mkdir -p "$PATHIFY_HOME"
-    cd "$PATHIFY_HOME"
     local env_upper=$(echo "$env" | tr '[:lower:]' '[:upper:]')
-    sed -e "s/@env@/$env/g" -e "s/@ENV@/$env_upper/g" template > "$env"
-    pathify-edit "$env"
+    sed -e "s/@env@/$env/g" -e "s/@ENV@/$env_upper/g" template > "$PATHIFY_HOME/$env"
+
+    PATHIFY_LAST_ENV="$env"
+    pathify-edit "$PATHIFY_HOME/$env"
 }
 
 function pathify-edit {
-    local env="$1"
-    ${EDITOR:-vim} $PATHIFY_HOME/$env
+    local env="${1:-$PATHIFY_LAST_ENV}"
+    _pathify_verify_env "$env" || return 1
+
+    [[ ! -e "$PATHIFY_HOME/$env" ]] && echo "pathify: Error: environment doesn't exist" && return 1
+
+    PATHIFY_LAST_ENV="$env"
+    ${EDITOR:-vim} "$PATHIFY_HOME/$env"
 }
 
 # tab completion

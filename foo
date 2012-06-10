@@ -5,37 +5,37 @@
 
 deactivate_foo () {
     # reset old environment variables
-    if [ -n "$_OLD_FOO_PATH" ] ; then
+    if [ -n "${_OLD_FOO_PATH+set}" ] ; then
         PATH="$_OLD_FOO_PATH"
         export PATH
         unset _OLD_FOO_PATH
     fi
-    if [ -n "$_OLD_FOO_MANPATH" ] ; then
+    if [ -n "${_OLD_FOO_MANPATH+set}" ] ; then
         MANPATH="$_OLD_FOO_MANPATH"
         export MANPATH
         unset _OLD_FOO_MANPATH
     fi
-    if [ -n "$_OLD_FOO_CFLAGS" ] ; then
+    if [ -n "${_OLD_FOO_CFLAGS+set}" ] ; then
         CFLAGS="$_OLD_FOO_CFLAGS"
         export CFLAGS
         unset _OLD_FOO_CFLAGS
     fi
-    if [ -n "$_OLD_FOO_CXXFLAGS" ] ; then
+    if [ -n "${_OLD_FOO_CXXFLAGS+set}" ] ; then
         CXXFLAGS="$_OLD_FOO_CXXFLAGS"
         export CXXFLAGS
         unset _OLD_FOO_CXXFLAGS
     fi
-    if [ -n "$_OLD_FOO_LDFLAGS" ] ; then
+    if [ -n "${_OLD_FOO_LDFLAGS+set}" ] ; then
         LDFLAGS="$_OLD_FOO_LDFLAGS"
         export LDFLAGS
         unset _OLD_FOO_LDFLAGS
     fi
-    if [ -n "$_OLD_FOO_LD_RUN_PATH" ] ; then
+    if [ -n "${_OLD_FOO_LD_RUN_PATH+set}" ] ; then
         LD_RUN_PATH="$_OLD_FOO_LD_RUN_PATH"
         export LD_RUN_PATH
         unset _OLD_FOO_LD_RUN_PATH
     fi
-    if [ -n "$_OLD_FOO_MAKEFLAGS" ] ; then
+    if [ -n "${_OLD_FOO_MAKEFLAGS+set}" ] ; then
         MAKEFLAGS="$_OLD_FOO_MAKEFLAGS"
         export MAKEFLAGS
         unset _OLD_FOO_MAKEFLAGS
