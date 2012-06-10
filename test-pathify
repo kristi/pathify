@@ -47,6 +47,7 @@ echo "Test clean unloading"
 echo "Test environment parameter verification"
 {
     ! (pathify load nonexistant)
+    ! (pathify load "")
     ! (pathify load " ")
     ! (pathify unload nonexistant)
     ! (pathify unload foo)
