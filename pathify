@@ -132,7 +132,7 @@ function pathify-new {
     [[ ! -e "$PATHIFY_HOME/template" ]] && echo "pathify: Error: no template found at '$PATHIFY_HOME/template'" && return 1
 
     local env_upper=$(echo "$env" | tr '[:lower:]' '[:upper:]')
-    sed -e "s/@env@/$env/g" -e "s/@ENV@/$env_upper/g" template > "$PATHIFY_HOME/$env"
+    sed -e "s/@env@/$env/g" -e "s/@ENV@/$env_upper/g" "$PATHIFY_HOME/template" > "$PATHIFY_HOME/$env"
 
     PATHIFY_LAST_ENV="$env"
     pathify-edit "$env"
