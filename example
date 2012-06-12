@@ -41,7 +41,8 @@ if [ -z "$EXAMPLE_ENV_DISABLE_PROMPT" ] &&
    [ -z "$PATHIFY_DISABLE_PROMPT" ] ; then
     _OLD_EXAMPLE_PS1="$PS1"
     # Add env name before first non-whitespace PS1 char
-    export PS1=$(echo "$PS1" | sed -e '0,/\S/s//[example] &/')
+    PS1=$(echo "$PS1" | sed -e '0,/\S/s//[example] &/')
+    export PS1
 fi
 
 # This should detect bash and zsh, which have a hash command that must
